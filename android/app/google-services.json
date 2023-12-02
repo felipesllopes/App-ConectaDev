@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1064977555174",
+    "project_id": "auth-4499c",
+    "storage_bucket": "auth-4499c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1064977555174:android:8d7c90f104c192c1a3e527",
+        "android_client_info": {
+          "package_name": "com.devbook"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA3ZH3sPKO6iyVSMB-naelw6GMCRxjTNf0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
