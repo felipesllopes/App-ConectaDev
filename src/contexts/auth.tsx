@@ -1,7 +1,8 @@
 import React, { createContext, useState } from "react";
+import { Alert } from "react-native";
 import firebase from "../config/firebase";
-import { IFormRegister } from "../pages/Register";
 import { IFormLogin } from "../pages/Login";
+import { IFormRegister } from "../pages/Register";
 
 interface IAuthContext {
     signed: boolean;
@@ -9,6 +10,7 @@ interface IAuthContext {
     user: IUser;
     signUp(data: IFormRegister): void;
     signIn(data: IFormLogin): void;
+    logOut(): void;
 }
 
 interface IProps {
@@ -102,9 +104,44 @@ export const AuthProvider: React.FunctionComponent<IProps> = ({ children }) => {
             });
     };
 
+    const logOut = async () => {
+        Alert.alert("Deseja sair?", "Você será deslogado da sua conta.", [
+            {
+                text: "Cancelar",
+                style: "cancel",
+            },
+            {
+                text: "Sair",
+                onPress: async () => {
+                    setLoading(true);
+                    await firebase
+                        .auth()
+                        .signOut()
+                        .then(() => {
+                            setUser({} as IUser);
+                        })
+                        .catch(error => {
+                            alert("Erro ao sair.");
+                            console.log(error);
+                        })
+                        .finally(() => {
+                            setLoading(false);
+                        });
+                },
+            },
+        ]);
+    };
+
     return (
         <AuthContext.Provider
-            value={{ signed: !!user.email, loading, signUp, signIn, user }}
+            value={{
+                signed: !!user.email,
+                loading,
+                signUp,
+                signIn,
+                logOut,
+                user,
+            }}
         >
             {children}
         </AuthContext.Provider>
