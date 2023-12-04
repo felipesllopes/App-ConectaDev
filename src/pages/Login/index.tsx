@@ -6,14 +6,18 @@ import { AccessButton } from "../../components/AccessButton";
 import { InputControl } from "../../components/InputControl";
 import { InputPasswordControl } from "../../components/InputPasswordControl";
 import { SendButton } from "../../components/SendButton";
+import { useContext } from "react";
 import { Container, Logo, Scroll } from "./styles";
+import { AuthContext } from "../../contexts/auth";
 
-interface IFormLogin {
+export interface IFormLogin {
     email: string;
     password: string;
 }
 
 export const Login: React.FunctionComponent = () => {
+    const { signIn } = useContext(AuthContext);
+
     const schema = yup.object({
         email: yup
             .string()
@@ -34,15 +38,14 @@ export const Login: React.FunctionComponent = () => {
     });
 
     const handleLogin = (data: IFormLogin) => {
-        alert("Entrou");
-        console.log(data);
+        signIn(data);
     };
 
     return (
         <Container>
             <Scroll showsVerticalScrollIndicator={false}>
                 <Logo
-                    source={require("../../assets/logo1.png")}
+                    source={require("../../assets/logo.png")}
                     resizeMode="contain"
                 />
 

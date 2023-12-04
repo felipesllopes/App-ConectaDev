@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "1064977555174",
+    "firebase_url": "https://auth-4499c-default-rtdb.firebaseio.com",
     "project_id": "auth-4499c",
     "storage_bucket": "auth-4499c.appspot.com"
   },

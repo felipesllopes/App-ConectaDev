@@ -1,15 +1,16 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import React from "react";
+import React, { useContext } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { AccessButton } from "../../components/AccessButton";
 import { InputControl } from "../../components/InputControl";
 import { InputPasswordControl } from "../../components/InputPasswordControl";
 import { SendButton } from "../../components/SendButton";
+import { AuthContext } from "../../contexts/auth";
 import { Container, Scroll } from "../Login/styles";
 import { Title } from "./styles";
 
-interface IFormRegister {
+export interface IFormRegister {
     name: string;
     userName: string;
     email: string;
@@ -18,6 +19,8 @@ interface IFormRegister {
 }
 
 export const Register: React.FunctionComponent = () => {
+    const { signUp } = useContext(AuthContext);
+
     const schema = yup.object({
         name: yup.string().required("Digite seu nome completo."),
         userName: yup.string().required("Digite seu nome de usuário."),
@@ -43,8 +46,7 @@ export const Register: React.FunctionComponent = () => {
     });
 
     const handleRegister = (data: IFormRegister) => {
-        alert("Entrou");
-        console.log(data);
+        signUp(data);
     };
 
     return (
