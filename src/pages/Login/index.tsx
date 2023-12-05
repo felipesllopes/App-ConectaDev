@@ -1,14 +1,14 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import React from "react";
+import Checkbox from "expo-checkbox";
+import React, { useContext } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { AccessButton } from "../../components/AccessButton";
 import { InputControl } from "../../components/InputControl";
 import { InputPasswordControl } from "../../components/InputPasswordControl";
 import { SendButton } from "../../components/SendButton";
-import { useContext } from "react";
-import { Container, Logo, Scroll } from "./styles";
 import { AuthContext } from "../../contexts/auth";
+import { Container, Logo, Scroll, Section, TextSection } from "./styles";
 
 export interface IFormLogin {
     email: string;
@@ -16,7 +16,7 @@ export interface IFormLogin {
 }
 
 export const Login: React.FunctionComponent = () => {
-    const { signIn } = useContext(AuthContext);
+    const { signIn, checked, setChecked } = useContext(AuthContext);
 
     const schema = yup.object({
         email: yup
@@ -78,6 +78,11 @@ export const Login: React.FunctionComponent = () => {
                     onPress={handleSubmit(handleLogin)}
                     title="Entrar"
                 />
+
+                <Section>
+                    <Checkbox value={checked} onValueChange={setChecked} />
+                    <TextSection>Continuar conectado</TextSection>
+                </Section>
 
                 <AccessButton
                     title="Clique aqui para "

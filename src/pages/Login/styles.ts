@@ -16,3 +16,15 @@ export const Logo = styled.Image`
     align-self: center;
     margin: 150px 0 50px;
 `;
+
+export const Section = styled.View`
+    flex-direction: row;
+    align-items: center;
+    margin: 0 0 20px;
+    align-self: center;
+`;
+
+export const TextSection = styled.Text`
+    font-size: 16px;
+    margin-left: 10px;
+`;

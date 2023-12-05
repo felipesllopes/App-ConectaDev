@@ -1,4 +1,5 @@
-import React, { createContext, useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, { createContext, useEffect, useState } from "react";
 import { Alert } from "react-native";
 import firebase from "../config/firebase";
 import { IFormLogin } from "../pages/Login";
@@ -11,6 +12,8 @@ interface IAuthContext {
     signUp(data: IFormRegister): void;
     signIn(data: IFormLogin): void;
     logOut(): void;
+    checked: boolean;
+    setChecked: (value: boolean) => void;
 }
 
 interface IProps {
@@ -29,6 +32,34 @@ export const AuthContext = createContext<IAuthContext>({} as IAuthContext);
 export const AuthProvider: React.FunctionComponent<IProps> = ({ children }) => {
     const [user, setUser] = useState<IUser>({} as IUser);
     const [loading, setLoading] = useState<boolean>(false);
+    const [checked, setChecked] = useState<boolean>(false);
+
+    useEffect(() => {
+        (async () => {
+            setLoading(true);
+            await AsyncStorage.getItem("keyBoolean")
+                .then(async value => {
+                    if (value == "true") {
+                        setChecked(true);
+                        await AsyncStorage.getItem("keyUser")
+                            .then(async data => {
+                                const obj = await JSON.parse(data);
+                                setUser(obj);
+                            })
+                            .catch(error => {
+                                alert("Erro ao buscar dados armazenados.");
+                                console.log(error);
+                            });
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
+                })
+                .finally(() => {
+                    setLoading(false);
+                });
+        })();
+    }, []);
 
     const signUp = async (data: IFormRegister) => {
         setLoading(true);
@@ -99,8 +130,16 @@ export const AuthProvider: React.FunctionComponent<IProps> = ({ children }) => {
                 alert("Erro ao tentar logar usuário.");
                 console.log(error);
             })
-            .finally(() => {
+            .finally(async () => {
                 setLoading(false);
+
+                const valueBooleanString = checked ? "true" : "false";
+                await AsyncStorage.setItem("keyBoolean", valueBooleanString);
+
+                if (checked) {
+                    const object = JSON.stringify(data);
+                    await AsyncStorage.setItem("keyUser", object);
+                }
             });
     };
 
@@ -117,8 +156,10 @@ export const AuthProvider: React.FunctionComponent<IProps> = ({ children }) => {
                     await firebase
                         .auth()
                         .signOut()
-                        .then(() => {
+                        .then(async () => {
                             setUser({} as IUser);
+                            await AsyncStorage.clear();
+                            setChecked(false);
                         })
                         .catch(error => {
                             alert("Erro ao sair.");
@@ -141,6 +182,8 @@ export const AuthProvider: React.FunctionComponent<IProps> = ({ children }) => {
                 signIn,
                 logOut,
                 user,
+                checked,
+                setChecked,
             }}
         >
             {children}
