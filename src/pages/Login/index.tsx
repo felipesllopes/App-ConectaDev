@@ -81,7 +81,7 @@ export const Login: React.FunctionComponent = () => {
 
                 <Section>
                     <Checkbox value={checked} onValueChange={setChecked} />
-                    <TextSection>Continuar conectado</TextSection>
+                    <TextSection>Permanecer conectado</TextSection>
                 </Section>
 
                 <AccessButton

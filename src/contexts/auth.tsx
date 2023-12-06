@@ -25,6 +25,7 @@ export interface IUser {
     name: string;
     userName: string;
     created: string;
+    uid: string;
 }
 
 export const AuthContext = createContext<IAuthContext>({} as IAuthContext);
@@ -37,13 +38,17 @@ export const AuthProvider: React.FunctionComponent<IProps> = ({ children }) => {
     useEffect(() => {
         (async () => {
             setLoading(true);
-            await AsyncStorage.getItem("keyBoolean")
+            await AsyncStorage.getItem("@keyBoolean")
                 .then(async value => {
-                    if (value == "true") {
+                    if (value === "false") {
+                        console.log("Entrou aqui");
+                        return;
+                    }
+                    if (value === "true") {
                         setChecked(true);
-                        await AsyncStorage.getItem("keyUser")
+                        await AsyncStorage.getItem("@keyUser")
                             .then(async data => {
-                                const obj = await JSON.parse(data);
+                                const obj: IUser = await JSON.parse(data);
                                 setUser(obj);
                             })
                             .catch(error => {
@@ -83,6 +88,7 @@ export const AuthProvider: React.FunctionComponent<IProps> = ({ children }) => {
                             userName: data.userName,
                             email: value.user.email,
                             created: new Date().toLocaleDateString(),
+                            uid: value.user.uid,
                         };
                         setUser(dados);
                     })
@@ -118,8 +124,20 @@ export const AuthProvider: React.FunctionComponent<IProps> = ({ children }) => {
                             userName: values.data().nomeUsuario,
                             email: value.user.email,
                             created: values.data().criado,
+                            uid: value.user.uid,
                         };
                         setUser(dados);
+
+                        const valueBooleanString = checked ? "true" : "false";
+                        await AsyncStorage.setItem(
+                            "@keyBoolean",
+                            valueBooleanString,
+                        );
+
+                        if (checked) {
+                            const object = JSON.stringify(dados);
+                            await AsyncStorage.setItem("@keyUser", object);
+                        }
                     })
                     .catch(error => {
                         alert("Erro ao buscar os dados do usuário.");
@@ -132,14 +150,6 @@ export const AuthProvider: React.FunctionComponent<IProps> = ({ children }) => {
             })
             .finally(async () => {
                 setLoading(false);
-
-                const valueBooleanString = checked ? "true" : "false";
-                await AsyncStorage.setItem("keyBoolean", valueBooleanString);
-
-                if (checked) {
-                    const object = JSON.stringify(data);
-                    await AsyncStorage.setItem("keyUser", object);
-                }
             });
     };
 
@@ -157,9 +167,15 @@ export const AuthProvider: React.FunctionComponent<IProps> = ({ children }) => {
                         .auth()
                         .signOut()
                         .then(async () => {
-                            setUser({} as IUser);
-                            await AsyncStorage.clear();
-                            setChecked(false);
+                            await AsyncStorage.clear()
+                                .then(() => {
+                                    setUser({} as IUser);
+                                    setChecked(false);
+                                })
+                                .catch(error => {
+                                    alert("Erro ao deslogar usuário.");
+                                    console.log(error);
+                                });
                         })
                         .catch(error => {
                             alert("Erro ao sair.");

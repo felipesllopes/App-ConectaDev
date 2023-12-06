@@ -1,22 +1,28 @@
-import React from "react";
-import { Container, Title } from "./styles";
-import { useContext } from "react";
-import { AuthContext } from "../../contexts/auth";
+import { useNavigation } from "@react-navigation/native";
+import React, { useContext } from "react";
 import { View } from "react-native";
-import { SendButton } from "../../components/SendButton";
+import { AuthContext } from "../../contexts/auth";
+import { IScreenNavigation } from "../../interfaces";
+import { ButtonPost, Container, IconNewPost, Title } from "./styles";
 
 export const Home: React.FunctionComponent = () => {
-    const { user, logOut } = useContext(AuthContext);
+    const { user } = useContext(AuthContext);
+    const { navigate } = useNavigation<IScreenNavigation>();
 
     return (
-        <Container>
+        <View style={{ flex: 1 }}>
             {user && (
-                <View>
+                <Container>
                     <Title>Tela Home</Title>
                     <Title>{user.email}</Title>
-                    <SendButton onPress={logOut} title="Sair" />
-                </View>
+                    <ButtonPost
+                        activeOpacity={0.7}
+                        onPress={() => navigate("NewPost")}
+                    >
+                        <IconNewPost name="edit-2" />
+                    </ButtonPost>
+                </Container>
             )}
-        </Container>
+        </View>
     );
 };
