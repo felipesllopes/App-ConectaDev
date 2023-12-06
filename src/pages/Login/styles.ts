@@ -11,8 +11,8 @@ export const Scroll = styled.ScrollView`
 `;
 
 export const Logo = styled.Image`
-    height: 34px;
-    width: 255px;
+    height: ${126 * 0.35}px;
+    width: ${856 * 0.35}px;
     align-self: center;
     margin: 150px 0 50px;
 `;
@@ -28,3 +28,5 @@ export const TextSection = styled.Text`
     font-size: 16px;
     margin-left: 10px;
 `;
+
+// Calculo para tamanho da logo: 0,31 x (856x126)

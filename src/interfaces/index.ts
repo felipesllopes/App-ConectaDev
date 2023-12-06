@@ -10,3 +10,13 @@ export interface IPropsInputControl extends TextInputProps {
     name: string;
     errors: string | undefined;
 }
+
+export interface IPost {
+    id: string;
+    created: Date;
+    content: string;
+    autor: string;
+    userId: string;
+    likes: number;
+    avatarUrl: string;
+}

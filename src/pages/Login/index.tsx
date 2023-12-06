@@ -45,7 +45,7 @@ export const Login: React.FunctionComponent = () => {
         <Container>
             <Scroll showsVerticalScrollIndicator={false}>
                 <Logo
-                    source={require("../../assets/logo.png")}
+                    source={require("../../assets/logo-blue.png")}
                     resizeMode="contain"
                 />
 
