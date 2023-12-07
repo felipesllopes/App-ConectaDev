@@ -1,7 +1,8 @@
+import firestore from "@react-native-firebase/firestore";
+import storage from "@react-native-firebase/storage";
 import { useNavigation } from "@react-navigation/native";
 import React, { useContext, useState } from "react";
 import { Keyboard, TouchableWithoutFeedback } from "react-native";
-import firebase from "../../config/firebase";
 import { AuthContext } from "../../contexts/auth";
 import {
     AlignItens,
@@ -20,8 +21,7 @@ export const NewPost: React.FunctionComponent = () => {
     const limitCharacters = 300;
 
     const handlePost = async () => {
-        await firebase
-            .storage()
+        await storage()
             .ref("users")
             .child(user?.uid)
             .getDownloadURL()
@@ -32,8 +32,7 @@ export const NewPost: React.FunctionComponent = () => {
                 setAvatarUrl(null);
             });
 
-        await firebase
-            .firestore()
+        await firestore()
             .collection("posts")
             .add({
                 created: new Date(),

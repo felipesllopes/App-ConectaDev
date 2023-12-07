@@ -1,8 +1,8 @@
+import firestore from "@react-native-firebase/firestore";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import React, { useCallback, useContext, useState } from "react";
-import { Text } from "react-native";
 import { Header } from "../../components/Header";
-import firebase from "../../config/firebase";
+import { PostsList } from "../../components/PostsList";
 import { AuthContext } from "../../contexts/auth";
 import { IPost, IScreenNavigation } from "../../interfaces";
 import {
@@ -23,34 +23,34 @@ export const Home: React.FunctionComponent = () => {
         useCallback(() => {
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             let active = true;
-            (async () => {})();
-            firebase
-                .firestore()
-                .collection("posts")
-                .orderBy("created", "desc")
-                .limit(5)
-                .get()
-                .then(snapshot => {
-                    if (active) {
-                        setPosts([]);
-                        const list = [];
+            (async () => {
+                await firestore()
+                    .collection("posts")
+                    .orderBy("created", "desc")
+                    .limit(5)
+                    .get()
+                    .then(snapshot => {
+                        if (active) {
+                            setPosts([]);
+                            const list = [];
 
-                        snapshot.docs.map(dat => {
-                            list.push({
-                                ...dat.data(),
-                                id: dat.id,
+                            snapshot.docs.map(dat => {
+                                list.push({
+                                    ...dat.data(),
+                                    id: dat.id,
+                                });
                             });
-                        });
-                        setPosts(list);
-                    }
-                })
-                .catch(error => {
-                    alert("Erro ao carregar Feed.");
-                    console.log(error);
-                })
-                .finally(() => {
-                    setLoading(false);
-                });
+                            setPosts(list);
+                        }
+                    })
+                    .catch(error => {
+                        alert("Erro ao carregar Feed.");
+                        console.log(error);
+                    })
+                    .finally(() => {
+                        setLoading(false);
+                    });
+            })();
 
             return () => {
                 active = false;
@@ -66,9 +66,12 @@ export const Home: React.FunctionComponent = () => {
                 <Loading size={"large"} />
             ) : (
                 <ListPosts
+                    showsVerticalScrollIndicator={false}
                     data={posts}
                     keyExtractor={item => item.id.toString()}
-                    renderItem={({ item }) => <Text>{item.autor}</Text>}
+                    renderItem={({ item }) => (
+                        <PostsList item={item} userUid={user.uid} />
+                    )}
                 />
             )}
 

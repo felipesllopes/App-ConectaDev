@@ -13,7 +13,7 @@ export interface IPropsInputControl extends TextInputProps {
 
 export interface IPost {
     id: string;
-    created: Date;
+    created: { seconds: number; nanoseconds: number };
     content: string;
     autor: string;
     userId: string;

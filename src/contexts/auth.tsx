@@ -1,7 +1,8 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import auth from "@react-native-firebase/auth";
+import firestore from "@react-native-firebase/firestore";
 import React, { createContext, useEffect, useState } from "react";
 import { Alert } from "react-native";
-import firebase from "../config/firebase";
 import { IFormLogin } from "../pages/Login";
 import { IFormRegister } from "../pages/Register";
 
@@ -41,7 +42,6 @@ export const AuthProvider: React.FunctionComponent<IProps> = ({ children }) => {
             await AsyncStorage.getItem("@keyBoolean")
                 .then(async value => {
                     if (value === "false") {
-                        console.log("Entrou aqui");
                         return;
                     }
                     if (value === "true") {
@@ -68,13 +68,11 @@ export const AuthProvider: React.FunctionComponent<IProps> = ({ children }) => {
 
     const signUp = async (data: IFormRegister) => {
         setLoading(true);
-        await firebase
-            .auth()
+        await auth()
             .createUserWithEmailAndPassword(data.email, data.password)
             .then(async value => {
                 const uid = value.user.uid;
-                await firebase
-                    .firestore()
+                await firestore()
                     .collection("users")
                     .doc(uid)
                     .set({
@@ -108,13 +106,11 @@ export const AuthProvider: React.FunctionComponent<IProps> = ({ children }) => {
 
     const signIn = async (data: IFormLogin) => {
         setLoading(true);
-        await firebase
-            .auth()
+        await auth()
             .signInWithEmailAndPassword(data.email, data.password)
             .then(async value => {
                 const uid = value.user.uid;
-                await firebase
-                    .firestore()
+                await firestore()
                     .collection("users")
                     .doc(uid)
                     .get()
@@ -163,8 +159,7 @@ export const AuthProvider: React.FunctionComponent<IProps> = ({ children }) => {
                 text: "Sair",
                 onPress: async () => {
                     setLoading(true);
-                    await firebase
-                        .auth()
+                    await auth()
                         .signOut()
                         .then(async () => {
                             await AsyncStorage.clear()
