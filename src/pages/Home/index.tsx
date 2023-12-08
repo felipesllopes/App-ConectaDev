@@ -18,6 +18,9 @@ export const Home: React.FunctionComponent = () => {
     const { navigate } = useNavigation<IScreenNavigation>();
     const [posts, setPosts] = useState<IPost[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
+    const [loadingRefresh, setLoadingRefresh] = useState<boolean>(false);
+    const [lastItem, setLastItem] = useState<object>({});
+    const [emptyList, setEmptyList] = useState<boolean>(false);
 
     useFocusEffect(
         useCallback(() => {
@@ -40,7 +43,11 @@ export const Home: React.FunctionComponent = () => {
                                     id: dat.id,
                                 });
                             });
+                            setEmptyList(snapshot.empty);
                             setPosts(list);
+                            setLastItem(
+                                snapshot.docs[snapshot.docs.length - 1],
+                            );
                         }
                     })
                     .catch(error => {
@@ -58,6 +65,67 @@ export const Home: React.FunctionComponent = () => {
         }, []),
     );
 
+    // Buscar mais posts ao puxar lista
+    const handleRefreshPosts = async () => {
+        await firestore()
+            .collection("posts")
+            .orderBy("created", "desc")
+            .limit(5)
+            .get()
+            .then(snapshot => {
+                setPosts([]);
+                const list = [];
+
+                snapshot.docs.map(dat => {
+                    list.push({
+                        ...dat.data(),
+                        id: dat.id,
+                    });
+                });
+                setEmptyList(false);
+                setPosts(list);
+                setLastItem(snapshot.docs[snapshot.docs.length - 1]);
+            })
+            .catch(error => {
+                alert("Erro ao carregar Feed.");
+                console.log(error);
+            })
+            .finally(() => {
+                setLoadingRefresh(false);
+            });
+    };
+
+    const getListPosts = async () => {
+        if (emptyList) {
+            setLoading(false);
+            return null;
+        }
+
+        if (loading) return;
+
+        await firestore()
+            .collection("posts")
+            .orderBy("created", "desc")
+            .limit(5)
+            .startAfter(lastItem)
+            .get()
+            .then(snapshot => {
+                const list = [];
+
+                snapshot.docs.map(dat => {
+                    list.push({
+                        ...dat.data(),
+                        id: dat.id,
+                    });
+                });
+
+                setEmptyList(snapshot.empty);
+                setLastItem(snapshot.docs[snapshot.docs.length - 1]);
+                setPosts(current => [...current, ...list]);
+                setLoading(false);
+            });
+    };
+
     return (
         <Container>
             <Header />
@@ -72,6 +140,10 @@ export const Home: React.FunctionComponent = () => {
                     renderItem={({ item }) => (
                         <PostsList item={item} userUid={user.uid} />
                     )}
+                    refreshing={loadingRefresh}
+                    onRefresh={handleRefreshPosts}
+                    onEndReached={() => getListPosts()}
+                    onEndReachedThreshold={0.1}
                 />
             )}
 

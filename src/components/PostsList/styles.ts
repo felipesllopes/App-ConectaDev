@@ -35,6 +35,7 @@ export const Post = styled.Text`
 export const Actions = styled.View`
     flex-direction: row;
     justify-content: space-between;
+    align-items: center;
 `;
 
 export const ViewLikes = styled.View`
@@ -49,8 +50,10 @@ export const LikeButton = styled(Ionicons)`
 export const Likes = styled.Text`
     margin-left: 4px;
     font-weight: bold;
+    font-size: 13px;
 `;
 
 export const TimePost = styled.Text`
     font-weight: bold;
+    font-size: 13px;
 `;

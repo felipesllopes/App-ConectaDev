@@ -49,7 +49,7 @@ export const PostsList: React.FunctionComponent<IProps> = ({
                             : require("../../assets/avatar.png")
                     }
                 />
-                <Autor numberOfLines={1}>{item?.autor}</Autor>
+                <Autor numberOfLines={1}>{item?.autor.toLowerCase()}</Autor>
             </Header>
             <Post>{item?.content}</Post>
             <Actions>

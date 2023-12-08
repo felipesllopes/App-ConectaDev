@@ -69,6 +69,7 @@ export const Register: React.FunctionComponent = () => {
                         errors.userName && (errors.userName?.message as string)
                     }
                     placeholder="Nome de usuário"
+                    autoCapitalize="none"
                 />
 
                 <InputControl

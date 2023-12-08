@@ -26,7 +26,7 @@ export const NewPost: React.FunctionComponent = () => {
             .child(user?.uid)
             .getDownloadURL()
             .then(async imageUrl => {
-                setAvatarUrl(await imageUrl);
+                setAvatarUrl(imageUrl);
             })
             .catch(() => {
                 setAvatarUrl(null);
@@ -37,7 +37,7 @@ export const NewPost: React.FunctionComponent = () => {
             .add({
                 created: new Date(),
                 content: post,
-                autor: user?.name,
+                autor: user?.userName,
                 userId: user?.uid,
                 likes: 0,
                 avatarUrl,
