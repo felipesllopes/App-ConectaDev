@@ -3,6 +3,7 @@ import auth from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
 import React, { createContext, useEffect, useState } from "react";
 import { Alert } from "react-native";
+import { IUser } from "../interfaces";
 import { IFormLogin } from "../pages/Login";
 import { IFormRegister } from "../pages/Register";
 
@@ -19,14 +20,6 @@ interface IAuthContext {
 
 interface IProps {
     children: React.ReactElement;
-}
-
-export interface IUser {
-    email: string;
-    name: string;
-    userName: string;
-    created: string;
-    uid: string;
 }
 
 export const AuthContext = createContext<IAuthContext>({} as IAuthContext);

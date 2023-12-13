@@ -1,7 +1,10 @@
+import firestore from "@react-native-firebase/firestore";
+import { useNavigation } from "@react-navigation/native";
 import formatDistance from "date-fns/formatDistance";
 import ptBR from "date-fns/locale/pt-BR";
-import React, { useState } from "react";
-import { IPost } from "../../interfaces";
+import React, { useEffect, useState } from "react";
+import { functionHandleLikePost } from "../../functions/functionHandleLikePost";
+import { IPost, IScreenNavigationParans } from "../../interfaces";
 import {
     Actions,
     Autor,
@@ -26,9 +29,38 @@ export const PostsList: React.FunctionComponent<IProps> = ({
 }) => {
     const [like, setLike] = useState<boolean>(false);
     const [likePost, setLikePost] = useState<number>(item?.likes);
+    const { navigate } = useNavigation<IScreenNavigationParans>();
 
-    const handleLike = () => {
-        setLike(current => (current == true ? false : true));
+    useEffect(() => {
+        (async () => {
+            const docId = `${userUid}_${item.id}`;
+
+            await firestore()
+                .collection("likes")
+                .doc(docId)
+                .get()
+                .then(doc => {
+                    if (doc.exists) {
+                        setLike(true);
+                    } else {
+                        setLike(false);
+                    }
+                });
+        })();
+    }, [item.id, like, userUid]);
+
+    const handleLikePost = async () => {
+        const docId = `${userUid}_${item.id}`;
+
+        // Checar se o post já foi curtido
+        await functionHandleLikePost(
+            docId,
+            userUid,
+            item,
+            likePost,
+            setLikePost,
+            setLike,
+        );
     };
 
     const formatedDatePost = () => {
@@ -41,7 +73,10 @@ export const PostsList: React.FunctionComponent<IProps> = ({
 
     return (
         <Container style={{ elevation: 5 }}>
-            <Header activeOpacity={0.7} onPress={() => console.log(item.autor)}>
+            <Header
+                activeOpacity={0.7}
+                onPress={() => navigate("PostsUser", item)}
+            >
                 <AvatarUrl
                     source={
                         item?.avatarUrl
@@ -56,12 +91,12 @@ export const PostsList: React.FunctionComponent<IProps> = ({
                 <ViewLikes>
                     <LikeButton
                         color={like ? "#d00" : "#000"}
-                        onPress={handleLike}
+                        onPress={handleLikePost}
                         name={like ? "heart" : "heart-outline"}
                     />
                     <Likes>
-                        - {item?.likes}
-                        {item?.likes > 1 ? " curtidas" : " curtida"}
+                        - {likePost}
+                        {likePost > 1 ? " curtidas" : " curtida"}
                     </Likes>
                 </ViewLikes>
                 <TimePost>há {formatedDatePost()}</TimePost>

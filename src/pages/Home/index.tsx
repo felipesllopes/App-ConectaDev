@@ -1,5 +1,6 @@
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import React, { useCallback, useContext, useState } from "react";
+import { FooterList } from "../../components/FooterList";
 import { Header } from "../../components/Header";
 import { PostsList } from "../../components/PostsList";
 import { AuthContext } from "../../contexts/auth";
@@ -55,10 +56,15 @@ export const Home: React.FunctionComponent = () => {
     };
 
     const getListPosts = async () => {
+        if (emptyList) {
+            setLoading(false);
+            return null;
+        }
+
+        if (loading) return;
+
         await functionGetListPosts(
-            emptyList,
             setLoading,
-            loading,
             lastItem,
             setEmptyList,
             setLastItem,
@@ -83,7 +89,10 @@ export const Home: React.FunctionComponent = () => {
                     refreshing={loadingRefresh}
                     onRefresh={handleRefreshPosts}
                     onEndReached={() => getListPosts()}
-                    onEndReachedThreshold={0.1}
+                    onEndReachedThreshold={0.3}
+                    ListFooterComponent={
+                        <FooterList load={loading} empty={emptyList} />
+                    }
                 />
             )}
 

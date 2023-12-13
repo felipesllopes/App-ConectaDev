@@ -2,21 +2,12 @@ import firestore from "@react-native-firebase/firestore";
 import { IPost } from "../interfaces";
 
 export const functionGetListPosts = async (
-    emptyList: boolean,
     setLoading: (value: React.SetStateAction<boolean>) => void,
-    loading: boolean,
     lastItem: object,
     setEmptyList: (value: React.SetStateAction<boolean>) => void,
     setLastItem: (value: React.SetStateAction<object>) => void,
     setPosts: (value: React.SetStateAction<IPost[]>) => void,
 ) => {
-    if (emptyList) {
-        setLoading(false);
-        return null;
-    }
-
-    if (loading) return;
-
     await firestore()
         .collection("posts")
         .orderBy("created", "desc")

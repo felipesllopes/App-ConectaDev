@@ -5,10 +5,22 @@ export interface IScreenNavigation {
     navigate: (screen: string) => void;
 }
 
+export interface IScreenNavigationParans {
+    navigate: (screen: string, params?: IPost) => void;
+}
+
 export interface IPropsInputControl extends TextInputProps {
     control: Control;
     name: string;
     errors: string | undefined;
+}
+
+export interface IUser {
+    email: string;
+    name: string;
+    userName: string;
+    created: string;
+    uid: string;
 }
 
 export interface IPost {
