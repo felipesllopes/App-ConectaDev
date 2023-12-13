@@ -4,32 +4,29 @@ import {
     useNavigation,
     useRoute,
 } from "@react-navigation/native";
-import React, {
-    useCallback,
-    useContext,
-    useLayoutEffect,
-    useState,
-} from "react";
+import React, { useCallback, useLayoutEffect, useState } from "react";
 import { ActivityIndicator } from "react-native";
 import { PostsList } from "../../components/PostsList";
-import { AuthContext } from "../../contexts/auth";
 import { IPost } from "../../interfaces";
 import { Container, ListPosts } from "./styles";
 
+interface RouteParams {
+    autor?: string;
+    userId?: string;
+}
+
 export const PostsUser: React.FunctionComponent = () => {
     const route = useRoute();
-    const user = route.params as IPost;
+    const { autor, userId } = route.params as RouteParams;
     const navigation = useNavigation();
     const [posts, setPosts] = useState<IPost[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
-    const { user: uid } = useContext(AuthContext);
 
     useLayoutEffect(() => {
         navigation.setOptions({
-            title: user?.autor == "" ? "Usuário" : user?.autor,
+            title: autor == "" ? "Usuário" : autor,
         });
-        console.log("Carregou");
-    }, [navigation, user?.autor]);
+    }, [navigation, autor]);
 
     useFocusEffect(
         useCallback(() => {
@@ -37,7 +34,7 @@ export const PostsUser: React.FunctionComponent = () => {
             let active = true;
             firestore()
                 .collection("posts")
-                .where("userId", "==", user?.userId)
+                .where("userId", "==", userId)
                 .orderBy("created", "desc")
                 .get()
                 .then(snapshot => {
@@ -51,10 +48,8 @@ export const PostsUser: React.FunctionComponent = () => {
                                 id: dat.id,
                             });
                         });
-                        // setEmptyList(snapshot.empty);
                         setPosts(list);
                         setLoading(false);
-                        // setLastItem(snapshot.docs[snapshot.docs.length - 1]);
                     }
                 })
                 .catch(error => {
@@ -64,7 +59,7 @@ export const PostsUser: React.FunctionComponent = () => {
             return () => {
                 active = false;
             };
-        }, [user?.userId]),
+        }, [userId]),
     );
 
     return (
@@ -77,15 +72,8 @@ export const PostsUser: React.FunctionComponent = () => {
                     data={posts}
                     keyExtractor={item => item.id.toString()}
                     renderItem={({ item }) => (
-                        <PostsList item={item} userUid={uid.uid} />
+                        <PostsList item={item} userUid={userId} />
                     )}
-                    // refreshing={loadingRefresh}
-                    // onRefresh={handleRefreshPosts}
-                    // onEndReached={() => getListPosts()}
-                    // onEndReachedThreshold={0.3}
-                    // ListFooterComponent={
-                    //     <FooterList load={loading} empty={emptyList} />
-                    // }
                 />
             )}
         </Container>

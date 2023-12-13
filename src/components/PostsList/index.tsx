@@ -75,7 +75,12 @@ export const PostsList: React.FunctionComponent<IProps> = ({
         <Container style={{ elevation: 5 }}>
             <Header
                 activeOpacity={0.7}
-                onPress={() => navigate("PostsUser", item)}
+                onPress={() =>
+                    navigate("PostsUser", {
+                        autor: item.autor,
+                        userId: item.userId,
+                    })
+                }
             >
                 <AvatarUrl
                     source={

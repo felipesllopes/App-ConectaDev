@@ -6,7 +6,10 @@ export interface IScreenNavigation {
 }
 
 export interface IScreenNavigationParans {
-    navigate: (screen: string, params?: IPost) => void;
+    navigate: (
+        screen: string,
+        params?: { autor?: string; userId?: string },
+    ) => void;
 }
 
 export interface IPropsInputControl extends TextInputProps {
